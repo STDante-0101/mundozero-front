@@ -1,23 +1,26 @@
-# npm
+# build output
 dist
 web
 node_modules
-
-# test coverage
 coverage
 
-# config
+# environment
+.env
+.env.*
+!.env.example
+.envrc
+.direnv/
 config.json
 
 # ide
 .idea
 .vs
-
-# vim
 *.sw?
 
-# direnv
-.direnv/
+# os
+.DS_Store
+Thumbs.db
 
-# environment related
-.envrc
+# claude code (local only)
+.claude/
+MUNDOZERO_RESUMO.md
