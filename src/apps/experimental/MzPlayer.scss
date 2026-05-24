@@ -1,0 +1,395 @@
+// MzPlayer — Video OSD overrides (MundoZero design system)
+// Aplica sobre o player legado do Jellyfin sem alterar JS
+
+// ============================================================
+//  Tokens locais (fallback se as CSS vars não estiverem prontas)
+// ============================================================
+$accent:     #FF6B1A;
+$accent-hi:  #FF8540;
+$bg-glass:   rgba(2, 5, 16, 0.88);
+$fg-0:       #F2F4FA;
+$fg-1:       #A8B0C2;
+$fg-2:       #5A6276;
+
+// ============================================================
+//  Top bar (osdHeader) — gradiente escuro + botão Voltar pill
+// ============================================================
+.skinHeader-withBackground.osdHeader {
+    background: linear-gradient(
+        180deg,
+        rgba(2, 5, 16, 0.90) 0%,
+        rgba(2, 5, 16, 0.55) 55%,
+        transparent 100%
+    ) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    height: 80px !important;
+}
+
+// Botão Voltar — pill branco translúcido
+.osdHeader .headerBackButton {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border-radius: 999px !important;
+    padding: 6px 16px 6px 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    color: $fg-0 !important;
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    transition: background 160ms ease, border-color 160ms ease !important;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.24) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+
+    // Ícone de seta menor
+    .material-icons {
+        font-size: 18px !important;
+    }
+}
+
+// Título no AppBar do player — alinhado à direita, fonte Cinzel
+.osdHeader .headerTop {
+    pointer-events: all;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 24px !important;
+}
+
+// ============================================================
+//  Bottom OSD — gradiente dark, barra compacta
+// ============================================================
+.videoOsdBottom {
+    background: linear-gradient(
+        0deg,
+        rgba(2, 5, 16, 0.96) 0%,
+        rgba(2, 5, 16, 0.72) 50%,
+        transparent 100%
+    ) !important;
+    padding-top: 8vh !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+}
+
+// Esconde título/info duplicados no OSD
+// (já aparecem no AppBar React acima)
+.osdMainTextContainer,
+.osdSecondaryMediaInfo {
+    display: none !important;
+}
+
+// ============================================================
+//  Progress slider — fino, laranja, sem thumb gordo
+// ============================================================
+.sliderContainer {
+    height: 4px !important;
+    margin: 0 0 12px !important;
+    position: relative;
+}
+
+.osdPositionSlider {
+    height: 4px !important;
+    border-radius: 2px !important;
+    cursor: pointer !important;
+    accent-color: var(--accent, $accent) !important;
+
+    // Track fundo
+    &::-webkit-slider-runnable-track {
+        height: 4px !important;
+        border-radius: 2px !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    // Track cheio (progresso)
+    // Webkit usa gradient no linear-gradient para colorir a parte tocada
+    // O accentColor cuida disso no Firefox
+
+    // Thumb
+    &::-webkit-slider-thumb {
+        width: 14px !important;
+        height: 14px !important;
+        border-radius: 50% !important;
+        background: $fg-0 !important;
+        border: none !important;
+        box-shadow: 0 0 6px rgba(255, 107, 26, 0.5) !important;
+        margin-top: -5px !important;
+        cursor: pointer !important;
+        transition: transform 120ms ease !important;
+    }
+
+    &:hover::-webkit-slider-thumb {
+        transform: scale(1.3) !important;
+    }
+
+    &::-moz-range-track {
+        height: 4px !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+        border-radius: 2px !important;
+    }
+
+    &::-moz-range-thumb {
+        width: 14px !important;
+        height: 14px !important;
+        border-radius: 50% !important;
+        background: $fg-0 !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+}
+
+// Marcadores de capítulo
+.sliderMarkerContainer {
+    height: 4px !important;
+}
+
+// Slider de volume
+.osdVolumeSlider {
+    accent-color: var(--accent, $accent) !important;
+    height: 4px !important;
+}
+
+// ============================================================
+//  Tempos (posição + duração)
+// ============================================================
+.osdPositionText,
+.osdDurationText {
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    font-size: 0.8125rem !important;
+    font-weight: 500 !important;
+    color: $fg-1 !important;
+    white-space: nowrap !important;
+}
+
+.osdPositionText { color: $fg-0 !important; }
+
+.endsAtText {
+    font-size: 0.75rem !important;
+    color: $fg-2 !important;
+}
+
+// ============================================================
+//  Botões de controle
+// ============================================================
+.videoOsdBottom .paper-icon-button-light,
+.videoOsdBottom [is="paper-icon-button-light"] {
+    color: rgba(242, 244, 250, 0.85) !important;
+    border-radius: 50% !important;
+    transition: color 140ms ease, background 140ms ease, transform 120ms ease !important;
+    padding: 6px !important;
+
+    &:hover {
+        color: $fg-0 !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        transform: scale(1.12) !important;
+    }
+
+    // Ícones tamanho uniforme
+    .material-icons,
+    .xlargePaperIconButton,
+    .largePaperIconButton {
+        font-size: 22px !important;
+    }
+}
+
+// Botão pause/play — levemente maior
+.videoOsdBottom .btnPause,
+.videoOsdBottom .btnPlay {
+    .material-icons { font-size: 28px !important; }
+}
+
+// Botão configurações (gear)
+.videoOsdBottom .btnVideoOsdSettings {
+    .material-icons { font-size: 20px !important; }
+}
+
+// Volume buttons wrapper
+.volumeButtons {
+    gap: 4px !important;
+}
+
+// ============================================================
+//  Rating button (coração) — cor laranja quando ativo
+// ============================================================
+.videoOsdBottom .btnUserRating.ratingbutton-on .material-icons {
+    color: var(--accent, $accent) !important;
+}
+
+// ============================================================
+//  ActionSheet — painel de Áudio & Legendas / Qualidade
+// ============================================================
+.actionSheet {
+    background: var(--bg-2, #0A1024) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    box-shadow:
+        0 16px 64px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 107, 26, 0.12) !important;
+    overflow: hidden !important;
+}
+
+.actionSheetTitle {
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: var(--fg-0, $fg-0) !important;
+    letter-spacing: 0 !important;
+    padding: 16px 20px 8px !important;
+    margin: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.actionSheetMenuItem {
+    color: var(--fg-1, $fg-1) !important;
+    border-radius: 0 !important;
+    transition: background 120ms ease, color 120ms ease !important;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
+        color: var(--fg-0, $fg-0) !important;
+    }
+}
+
+// Item selecionado — laranja
+.actionSheetMenuItem .check {
+    color: var(--accent, $accent) !important;
+}
+
+// Item com check visível
+.actionSheetMenuItem [style*="visibility: visible"] .check,
+.actionSheetMenuItem .actionsheetMenuItemIcon.check {
+    color: var(--accent, $accent) !important;
+}
+
+.actionSheetItemText {
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    font-size: 0.9rem !important;
+}
+
+.actionSheetItemAsideText {
+    font-size: 0.78rem !important;
+    color: var(--fg-2, $fg-2) !important;
+    opacity: 1 !important;
+}
+
+// Divider
+.actionsheetDivider {
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+// Botão cancelar
+.btnCloseActionSheet {
+    color: var(--fg-1, $fg-1) !important;
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    font-size: 0.875rem !important;
+
+    &:hover { color: var(--fg-0, $fg-0) !important; }
+}
+
+// ============================================================
+//  Painel de qualidade / Configurações
+// ============================================================
+.videoSettings {
+    background: var(--bg-2, #0A1024) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.75) !important;
+    color: var(--fg-1, $fg-1) !important;
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+}
+
+.qualityOption,
+.videoQualityOption {
+    color: var(--fg-1, $fg-1) !important;
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
+        color: var(--fg-0, $fg-0) !important;
+    }
+
+    &.qualityOption-active,
+    &.is-selected {
+        color: var(--accent, $accent) !important;
+    }
+}
+
+// ============================================================
+//  Subtítulos — fonte e sombra legível
+// ============================================================
+.htmlvideoplayer::cue {
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    font-size: 1.1em !important;
+    color: #fff !important;
+    text-shadow:
+        0 1px 4px rgba(0, 0, 0, 1),
+        0 0 12px rgba(0, 0, 0, 0.9) !important;
+    background-color: transparent !important;
+}
+
+.videoSubtitlesInner,
+.videoSecondarySubtitlesInner {
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    background-color: rgba(2, 5, 16, 0.75) !important;
+    border-radius: 4px !important;
+    padding: 2px 8px !important;
+    font-size: 1.05em !important;
+    color: $fg-0 !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9) !important;
+}
+
+// ============================================================
+//  Up next (próximo episódio) — pill MundoZero
+// ============================================================
+.upNextContainer {
+    position: fixed !important;
+    bottom: 90px !important;
+    right: 24px !important;
+    z-index: 10 !important;
+}
+
+.upNextDialog {
+    background: var(--bg-2, #0A1024) !important;
+    border: 1px solid rgba(255, 107, 26, 0.3) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 107, 26, 0.15) !important;
+    color: var(--fg-0, $fg-0) !important;
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    overflow: hidden !important;
+}
+
+.btnUpNext,
+.upNextButton {
+    background: var(--accent, $accent) !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    font-weight: 600 !important;
+    transition: background 160ms ease !important;
+
+    &:hover {
+        background: var(--accent-hi, $accent-hi) !important;
+    }
+}
+
+// ============================================================
+//  SyncPlay
+// ============================================================
+.syncPlayIconCircle {
+    box-shadow: 0 0 0 0 rgba(255, 107, 26, 0) !important;
+}
+
+// ============================================================
+//  Reduz animações se usuário preferir
+// ============================================================
+@media (prefers-reduced-motion: reduce) {
+    .videoOsdBottom .paper-icon-button-light,
+    .videoOsdBottom [is="paper-icon-button-light"] {
+        transition: none !important;
+    }
+}

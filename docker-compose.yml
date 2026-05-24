@@ -1,0 +1,20 @@
+services:
+  mundozero:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mundozero
+    restart: unless-stopped
+    ports:
+      - "8096:8096"   # HTTP
+      - "8920:8920"   # HTTPS (opcional)
+    volumes:
+      - /mnt/user/appdata/jellyfin/config:/config
+      - /mnt/user/appdata/jellyfin/cache:/cache
+      # Adicione seus volumes de mídia abaixo:
+      # - /mnt/user/Media:/media:ro
+    environment:
+      - JELLYFIN_PublishedServerUrl=http://SEU_IP_UNRAID:8096
+    devices:
+      # Transcodificação por hardware (remova se não usar)
+      - /dev/dri:/dev/dri

@@ -1,0 +1,768 @@
+/* MzHomePage — content rows, media cards, diversão flutuante, buraco negro */
+
+// ============================================================
+//  Home layout
+// ============================================================
+.mz-home {
+    position: relative;
+    min-height: 100vh;
+}
+
+.mz-home__rows {
+    position: relative;
+    z-index: 2;
+    padding-top: 0;
+    padding-bottom: 80px;
+}
+
+// ============================================================
+//  Content Row
+// ============================================================
+.mz-row {
+    padding: 14px 0 36px;
+    position: relative;
+
+    &:hover { z-index: 10; }
+}
+
+.mz-row__head {
+    padding: 0 var(--gutter, 48px);
+    margin-bottom: 10px;
+}
+
+.mz-row__title {
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-weight: 600;
+    font-size: 1.375rem;
+    color: var(--fg-0, #F2F4FA);
+    margin: 0;
+    letter-spacing: 0;
+}
+
+// ─── Track wrapper — anchors the floating arrows ────────────────────────────
+.mz-row__track-wrap {
+    position: relative;
+}
+
+// ─── Floating prev/next arrows ──────────────────────────────────────────────
+.mz-row__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.20);
+    background: rgba(2, 5, 16, 0.80);
+    color: var(--fg-0, #F2F4FA);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 180ms ease, background 160ms ease, border-color 160ms ease;
+    pointer-events: none;
+
+    svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    &--prev { left: 8px; }
+    &--next { right: 8px; }
+
+    &:hover {
+        background: rgba(2, 5, 16, 0.95);
+        border-color: rgba(255, 255, 255, 0.45);
+    }
+}
+
+.mz-row:hover .mz-row__arrow {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mz-row__track {
+    display: flex;
+    gap: 12px;
+    padding: 10px var(--gutter, 48px);
+    margin: -10px 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    position: relative;
+    z-index: 1;
+
+    &::-webkit-scrollbar { display: none; }
+}
+
+.mz-row__track--portrait  .mz-card { width: 160px; }
+.mz-row__track--landscape .mz-card { width: 340px; }
+
+// ============================================================
+//  Media Card
+// ============================================================
+.mz-card {
+    position: relative;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    border-radius: 8px;
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 300ms ease;
+
+    &:hover {
+        transform: scale(1.06);
+        z-index: 20;
+    }
+}
+
+// ─── Media container ───────────────────────────────────────
+.mz-card__media {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-2, #0A1024);
+    // Amber border animates on hover (box-shadow doesn't create stacking ctx)
+    box-shadow: inset 0 0 0 0 transparent;
+    transition: box-shadow 200ms ease;
+
+    .mz-card:hover & {
+        box-shadow: inset 0 0 0 2px rgba(255, 107, 26, 0.9);
+    }
+}
+
+.mz-card__img {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+
+    .mz-card--portrait &  { aspect-ratio: 2 / 3; }
+    .mz-card--landscape & { aspect-ratio: 16 / 9; }
+}
+
+.mz-card__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bg-2, #0A1024), var(--bg-3, #121A33));
+    padding: 12px;
+
+    span {
+        font-family: var(--font-body, 'DM Sans', sans-serif);
+        font-weight: 600;
+        font-size: 0.75rem;
+        color: var(--fg-2, #5A6276);
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .mz-card--portrait &  { aspect-ratio: 2 / 3; }
+    .mz-card--landscape & { aspect-ratio: 16 / 9; }
+}
+
+
+// ─── Progress bar ──────────────────────────────────────────
+.mz-card__progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+    z-index: 2;
+}
+
+.mz-card__progress-fill {
+    display: block;
+    height: 100%;
+    background: var(--accent, #FF6B1A);
+    box-shadow: 0 0 8px rgba(255, 107, 26, 0.5);
+}
+
+// ─── Below-image meta ──────────────────────────────────────
+.mz-card__meta {
+    padding: 8px 2px 0;
+}
+
+.mz-card__name {
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--fg-0, #F2F4FA);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mz-card__year {
+    font-size: 0.75rem;
+    color: var(--fg-2, #5A6276);
+    margin-top: 2px;
+}
+
+// ============================================================
+//  Diversão 100% — flutuante, sem fundo
+// ============================================================
+.mz-diversao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 0 var(--gutter, 48px) 32px;
+    position: relative;
+    text-align: center;
+}
+
+.mz-diversao__bh {
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 0 80px rgba(255, 107, 26, 0.3));
+    // Smaller screens: scale via CSS so BH doesn't overflow viewport
+    .mz-bh {
+        @media (max-width: 900px) {
+            width: 360px !important;
+            height: 360px !important;
+        }
+        @media (max-width: 640px) {
+            width: 260px !important;
+            height: 260px !important;
+        }
+    }
+}
+
+.mz-diversao__body {
+    position: relative;
+    z-index: 2;
+    // Pull text UP so it floats over the lower half of the BH
+    margin-top: -160px;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 8px;
+    // Subtle shadow so text stays legible over BH glow
+    filter: drop-shadow(0 2px 8px rgba(2, 5, 16, 0.9));
+    @media (max-width: 900px) { margin-top: -120px; }
+    @media (max-width: 640px) { margin-top: -80px; }
+}
+
+.mz-diversao__kicker {
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.24em;
+    color: var(--accent, #FF6B1A);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.mz-diversao__title {
+    font-family: var(--font-display, 'Cinzel', serif);
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--fg-0, #F2F4FA);
+    letter-spacing: 0.04em;
+    margin: 0 0 16px;
+    line-height: 1.15;
+    // allow words to wrap in the suck animation
+    word-break: keep-all;
+}
+
+.mz-diversao__desc {
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--fg-1, #A8B0C2);
+    margin: 0 0 28px;
+    max-width: 460px;
+    word-break: keep-all;
+}
+
+.mz-diversao__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 24px;
+    background: var(--accent, #FF6B1A);
+    color: var(--fg-on-accent, #0A0500);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    box-shadow: 0 0 24px 4px rgba(255, 107, 26, 0.25);
+    transition: background 160ms ease, box-shadow 160ms ease;
+
+    svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    &:hover {
+        background: var(--accent-hi, #FF8540);
+        box-shadow: 0 0 48px 8px rgba(255, 107, 26, 0.5);
+    }
+}
+
+// ============================================================
+//  Suck animation — palavras puxadas para o buraco negro
+// ============================================================
+.mz-suck__word {
+    display: inline-block;
+    // palavras têm transition estático; a animação real é disparada no hover do pai
+}
+
+.mz-diversao:hover .mz-suck__word {
+    animation: mz-suck 2.4s var(--d, 0ms) cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+@keyframes mz-suck {
+    // Palavra em repouso
+    0% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        opacity: 1;
+        filter: none;
+    }
+    // Início do swoop — leve desvio como início de órbita
+    12% {
+        transform: translate(7px, -14px) scale(0.97) rotate(4deg);
+        opacity: 0.93;
+        filter: none;
+    }
+    // Espiral apertando — já sentindo a gravidade
+    26% {
+        transform: translate(-4px, -40px) scale(0.86) rotate(-14deg);
+        opacity: 0.72;
+        filter: blur(0.8px);
+    }
+    // Sugado para dentro — some no horizonte de eventos
+    35% {
+        transform: translate(2px, -170px) scale(0.08) rotate(-35deg);
+        opacity: 0;
+        filter: blur(14px);
+    }
+    // Ressurge do lado oposto
+    36% {
+        transform: translate(-2px, 170px) scale(0.08) rotate(35deg);
+        opacity: 0;
+        filter: blur(14px);
+    }
+    // Materializa de volta com brilho âmbar
+    65% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        opacity: 0.65;
+        filter: blur(0.3px) drop-shadow(0 0 8px rgba(255, 200, 120, 0.6));
+    }
+    100% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        opacity: 1;
+        filter: none;
+    }
+}
+
+// ============================================================
+//  Black Hole — Gargantua/Interstellar
+// ============================================================
+.mz-bh {
+    position: relative;
+    border-radius: 50%;
+    flex-shrink: 0;
+    isolation: isolate;
+}
+
+.mz-bh__glow {
+    position: absolute;
+    inset: -20%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 180, 80, 0.28) 18%, rgba(255, 107, 26, 0.12) 38%, transparent 65%);
+    filter: blur(18px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.mz-bh__disk--back {
+    position: absolute;
+    inset: -8%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+        rgba(255, 107, 26, 0)    0deg,
+        rgba(255, 107, 26, 0.4)  20deg,
+        rgba(255, 160, 60, 0.9)  45deg,
+        #FFE6A6                  70deg,
+        #FFFFFF                  80deg,
+        #FFE6A6                  90deg,
+        rgba(255, 160, 60, 0.9)  115deg,
+        rgba(255, 107, 26, 0.4)  140deg,
+        rgba(255, 107, 26, 0)    170deg,
+        rgba(255, 107, 26, 0)    190deg,
+        rgba(255, 107, 26, 0.3)  220deg,
+        rgba(255, 140, 40, 0.7)  250deg,
+        rgba(255, 170, 70, 0.8)  280deg,
+        rgba(255, 140, 40, 0.7)  310deg,
+        rgba(255, 107, 26, 0.3)  340deg,
+        rgba(255, 107, 26, 0)    360deg);
+    -webkit-mask: radial-gradient(ellipse 50% 50% at center, transparent 28%, #000 30%, #000 50%, transparent 50.5%);
+    mask: radial-gradient(ellipse 50% 50% at center, transparent 28%, #000 30%, #000 50%, transparent 50.5%);
+    filter: blur(1.6px);
+    transform: rotateX(72deg);
+    animation: mz-bh-spin 18s linear infinite;
+    z-index: 1;
+}
+
+.mz-bh__lens {
+    position: absolute;
+    inset: 2%;
+    border-radius: 50%;
+    background: conic-gradient(from 90deg,
+        transparent                0deg,
+        transparent                25deg,
+        rgba(255, 107, 26, 0.55)   50deg,
+        rgba(255, 200, 120, 1)     80deg,
+        #FFE6A6                    90deg,
+        rgba(255, 200, 120, 1)     100deg,
+        rgba(255, 107, 26, 0.55)   130deg,
+        transparent                155deg,
+        transparent                205deg,
+        rgba(255, 107, 26, 0.55)   230deg,
+        rgba(255, 200, 120, 1)     260deg,
+        #FFE6A6                    270deg,
+        rgba(255, 200, 120, 1)     280deg,
+        rgba(255, 107, 26, 0.55)   310deg,
+        transparent                335deg);
+    -webkit-mask: radial-gradient(circle, transparent 38%, #000 41%, #000 49%, transparent 51%);
+    mask: radial-gradient(circle, transparent 38%, #000 41%, #000 49%, transparent 51%);
+    filter: blur(1.4px) drop-shadow(0 0 8px rgba(255, 140, 40, 0.7));
+    z-index: 2;
+}
+
+.mz-bh__horizon {
+    position: absolute;
+    inset: 30%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, #000 60%, #020510 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 200, 120, 0.9),
+        0 0 10px 1px rgba(255, 160, 60, 0.65),
+        0 0 28px 4px rgba(255, 107, 26, 0.45);
+    z-index: 3;
+}
+
+.mz-bh__disk--front {
+    position: absolute;
+    inset: -8%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+        rgba(255, 107, 26, 0)    0deg,
+        rgba(255, 107, 26, 0.4)  20deg,
+        rgba(255, 160, 60, 0.9)  45deg,
+        #FFE6A6                  70deg,
+        #FFFFFF                  80deg,
+        #FFE6A6                  90deg,
+        rgba(255, 160, 60, 0.9)  115deg,
+        rgba(255, 107, 26, 0.4)  140deg,
+        rgba(255, 107, 26, 0)    170deg,
+        rgba(255, 107, 26, 0)    190deg,
+        rgba(255, 107, 26, 0.3)  220deg,
+        rgba(255, 140, 40, 0.7)  250deg,
+        rgba(255, 170, 70, 0.8)  280deg,
+        rgba(255, 140, 40, 0.7)  310deg,
+        rgba(255, 107, 26, 0.3)  340deg,
+        rgba(255, 107, 26, 0)    360deg);
+    -webkit-mask:
+        radial-gradient(ellipse 50% 50% at center, transparent 28%, #000 30%, #000 50%, transparent 50.5%),
+        linear-gradient(0deg, #000 0%, #000 50%, transparent 50%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask:
+        radial-gradient(ellipse 50% 50% at center, transparent 28%, #000 30%, #000 50%, transparent 50.5%),
+        linear-gradient(0deg, #000 0%, #000 50%, transparent 50%, transparent 100%);
+    mask-composite: intersect;
+    filter: blur(1.6px) drop-shadow(0 0 16px rgba(255, 160, 60, 0.55));
+    transform: rotateX(72deg);
+    animation: mz-bh-spin 18s linear infinite;
+    z-index: 4;
+}
+
+.mz-bh__beam {
+    position: absolute;
+    inset: -8%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse 22% 6% at 0% 50%, rgba(255, 255, 255, 0.9), rgba(255, 220, 140, 0.5) 40%, transparent 70%);
+    transform: rotateX(72deg) rotate(0deg);
+    animation: mz-bh-beam 18s linear infinite;
+    filter: blur(2.5px);
+    mix-blend-mode: screen;
+    z-index: 5;
+    opacity: 0.9;
+}
+
+@keyframes mz-bh-spin {
+    from { transform: rotateX(72deg) rotate(0deg); }
+    to   { transform: rotateX(72deg) rotate(360deg); }
+}
+
+@keyframes mz-bh-beam {
+    from { transform: rotateX(72deg) rotate(0deg); }
+    to   { transform: rotateX(72deg) rotate(360deg); }
+}
+
+// ============================================================
+//  Card Hover Popup — portal-rendered, overlaps neighboring cards
+// ============================================================
+.mz-card-popup {
+    position: fixed;
+    z-index: 9999;
+    background: var(--bg-2, #0A1024);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow:
+        0 12px 60px rgba(0, 0, 0, 0.90),
+        0 0 0 1px rgba(255, 255, 255, 0.07),
+        0 0 40px 8px  rgba(255, 107, 26, 0.35),
+        0 0 90px 24px rgba(255, 107, 26, 0.15);
+    pointer-events: auto;
+    animation: mz-popup-in 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes mz-popup-in {
+    from { transform: scale(0.92) translateY(6px); opacity: 0; }
+    to   { transform: scale(1)    translateY(0);   opacity: 1; }
+}
+
+.mz-card-popup__img-wrap {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-3, #121A33);
+}
+
+.mz-card-popup__img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.mz-card-popup__img-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, var(--bg-2, #0A1024), var(--bg-3, #121A33));
+
+    span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--fg-2, #5A6276);
+        text-align: center;
+        padding: 12px;
+    }
+}
+
+.mz-card-popup__body {
+    padding: 14px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+// ─── 4 circular action buttons (prototype spec) ────────────────────────────
+.mz-card-popup__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.mz-popup-btn {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.38);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--fg-0, #F2F4FA);
+    cursor: pointer;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: border-color 160ms ease, background 160ms ease;
+
+    svg { width: 14px; height: 14px; }
+
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.75);
+        background: rgba(255, 255, 255, 0.14);
+        color: var(--fg-0, #F2F4FA);
+    }
+
+    // Play — filled white, black icon
+    &--play {
+        background: #fff;
+        border-color: transparent;
+        color: #000;
+
+        svg { margin-left: 2px; } // optical center for triangle
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.88);
+            color: #000;
+        }
+    }
+
+    // Chevron — pushed to the right
+    &--chevron {
+        margin-left: auto;
+    }
+}
+
+// ─── Title ────────────────────────────────────────────────────────────────
+.mz-card-popup__title {
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--fg-0, #F2F4FA);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// ─── Meta row: [age] year · duration [HD] ────────────────────────────────
+.mz-card-popup__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-size: 0.8125rem;
+    color: var(--fg-1, #A8B0C2);
+}
+
+// Orange age-rating badge (e.g. "12", "A18")
+.mz-popup-age {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 5px;
+    min-width: 22px;
+    border-radius: 3px;
+    background: var(--accent, #FF6B1A);
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+// Small bordered HD badge
+.mz-popup-hd {
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 3px;
+    padding: 2px 5px;
+    color: var(--fg-1, #A8B0C2);
+}
+
+// ─── Genres ───────────────────────────────────────────────────────────────
+.mz-card-popup__genres {
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--fg-1, #A8B0C2);
+}
+
+// ─── Description ──────────────────────────────────────────────────────────
+.mz-card-popup__desc {
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--fg-1, #A8B0C2);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+// ============================================================
+//  Footer
+// ============================================================
+.mz-footer {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 32px var(--gutter, 48px);
+    border-top: 1px solid var(--hairline, rgba(255, 255, 255, 0.06));
+    font-family: var(--font-body, 'DM Sans', sans-serif);
+    font-size: 0.8125rem;
+    color: var(--fg-2, #5A6276);
+}
+
+.mz-footer__logo {
+    font-family: var(--font-display, 'Cinzel', serif);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.18em;
+    color: var(--fg-0, #F2F4FA);
+
+    span {
+        color: var(--accent, #FF6B1A);
+        text-shadow: 0 0 18px var(--accent-glow, rgba(255, 107, 26, 0.45));
+    }
+}
+
+// ============================================================
+//  Responsive
+// ============================================================
+@media (max-width: 900px) {
+    .mz-row__track--portrait  .mz-card { width: 140px; }
+    .mz-row__track--landscape .mz-card { width: 280px; }
+
+    .mz-diversao {
+        padding: 0 var(--gutter, 28px) 24px;
+    }
+
+    .mz-diversao__title { font-size: clamp(1.75rem, 4vw, 2.5rem); }
+}
+
+@media (max-width: 640px) {
+    .mz-row__head { padding: 0 20px; }
+
+    .mz-row__track {
+        padding-left: 20px;
+        padding-right: 0;
+    }
+
+    .mz-row__track--portrait  .mz-card { width: 120px; }
+    .mz-row__track--landscape .mz-card { width: 240px; }
+
+    .mz-diversao {
+        padding: 0 20px 20px;
+    }
+
+    .mz-diversao__title { font-size: 1.75rem; }
+    .mz-diversao__desc  { font-size: 0.9375rem; }
+
+    .mz-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 24px 20px;
+    }
+}
+
+// Reduz animação se o usuário preferir
+@media (prefers-reduced-motion: reduce) {
+    .mz-bh__disk--back,
+    .mz-bh__disk--front,
+    .mz-bh__beam { animation: none; }
+
+    .mz-diversao:hover .mz-suck__word { animation: none; }
+}

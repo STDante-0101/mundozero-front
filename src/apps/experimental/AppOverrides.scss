@@ -1,0 +1,389 @@
+// Default MUI breakpoints
+// https://mui.com/material-ui/customization/breakpoints/#default-breakpoints
+$mui-bp-sm: 600px;
+$mui-bp-md: 900px;
+$mui-bp-lg: 1200px;
+$mui-bp-xl: 1536px;
+
+// ===== MundoZero Design Tokens =====
+:root {
+    --bg-0: #020510;
+    --bg-1: #050816;
+    --bg-2: #0A1024;
+    --bg-3: #121A33;
+    --bg-glass: rgba(2, 5, 16, 0.72);
+    --fg-0: #F2F4FA;
+    --fg-1: #A8B0C2;
+    --fg-2: #5A6276;
+    --fg-on-accent: #0A0500;
+    --accent: #FF6B1A;
+    --accent-hi: #FF8540;
+    --accent-lo: #C44E0D;
+    --accent-glow: rgba(255, 107, 26, 0.45);
+    --accent-glow-soft: rgba(255, 107, 26, 0.18);
+    --cyan: #00D4FF;
+    --cyan-hi: #4DE3FF;
+    --cyan-glow: rgba(0, 212, 255, 0.45);
+    --cyan-glow-soft: rgba(0, 212, 255, 0.18);
+    --hairline: rgba(255, 255, 255, 0.06);
+    --hairline-strong: rgba(255, 255, 255, 0.12);
+    --overlay-strong: rgba(2, 5, 16, 0.88);
+    --overlay-soft: rgba(2, 5, 16, 0.40);
+    --font-display: 'Cinzel', 'Times New Roman', serif;
+    --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+    --sp-6: 24px; --sp-8: 32px; --sp-12: 48px; --sp-16: 64px;
+    --r-1: 4px; --r-2: 6px; --r-3: 8px; --r-4: 12px; --r-full: 999px;
+    --glow-amber: 0 0 48px 8px var(--accent-glow), 0 0 96px 24px var(--accent-glow-soft);
+    --glow-amber-soft: 0 0 24px 4px var(--accent-glow-soft);
+    --glow-cyan: 0 0 48px 8px var(--cyan-glow), 0 0 96px 24px var(--cyan-glow-soft);
+    --glow-cyan-soft: 0 0 24px 4px var(--cyan-glow-soft);
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+    --dur-fast: 160ms;
+    --dur: 240ms;
+    --navbar-h: 72px;
+    --gutter: 48px;
+
+    @media (max-width: 900px) {
+        --gutter: 28px;
+        --navbar-h: 60px;
+    }
+
+    @media (max-width: 640px) {
+        --gutter: 20px;
+        --navbar-h: 56px;
+    }
+}
+
+// ===== Base =====
+html, body {
+    background: var(--bg-0) !important;
+    font-family: var(--font-body) !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+// ===== Starfield =====
+.mz-starfield {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    background: radial-gradient(ellipse 120% 80% at 50% 0%, #0a1024 0%, #020510 60%, #020510 100%);
+}
+
+.mz-stars {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    background: transparent;
+}
+
+.mz-stars-small { left: 0; top: 0; }
+.mz-stars-med   { left: 0; top: 0; width: 2px; height: 2px; }
+.mz-stars-bright { left: 0; top: 0; width: 3px; height: 3px; }
+
+.mz-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 100% 80% at 50% 100%, rgba(2,5,16,0.7), transparent 60%);
+}
+
+// ===== AppBar — transparent at top, frosted glass when scrolled =====
+// Use high-specificity selectors to beat MUI's Paper background override
+.MuiAppBar-root {
+    transition:
+        background 240ms var(--ease-out, ease),
+        backdrop-filter 240ms var(--ease-out, ease),
+        border-color 240ms var(--ease-out, ease) !important;
+    border-bottom: 1px solid transparent !important;
+    color: var(--fg-0, #F2F4FA) !important;
+}
+
+// Scrolled state — glass
+.MuiAppBar-root.MuiAppBar-colorDefault,
+.MuiAppBar-colorDefault {
+    background: var(--bg-glass, rgba(2, 5, 16, 0.72)) !important;
+    background-color: var(--bg-glass, rgba(2, 5, 16, 0.72)) !important;
+    backdrop-filter: blur(16px) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
+    border-bottom-color: var(--hairline, rgba(255,255,255,0.06)) !important;
+    box-shadow: none !important;
+}
+
+// Top of page — fully transparent
+.MuiAppBar-root.MuiAppBar-colorTransparent,
+.MuiAppBar-colorTransparent {
+    background: transparent !important;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-bottom-color: transparent !important;
+}
+
+// Icon buttons inherit fg-0 in both states
+.MuiAppBar-root .MuiIconButton-root {
+    color: var(--fg-1, #A8B0C2) !important;
+    transition: color 160ms ease !important;
+
+    &:hover { color: var(--fg-0, #F2F4FA) !important; }
+}
+
+// AppBar height
+.MuiToolbar-root {
+    min-height: var(--navbar-h) !important;
+}
+
+// ===== MUNDO ZERO logo =====
+.mz-server-logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+    margin-right: var(--sp-3);
+}
+
+.mz-logo-mundo {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--fg-0);
+    letter-spacing: 0.18em;
+}
+
+.mz-logo-zero {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--accent);
+    letter-spacing: 0.18em;
+    text-shadow: 0 0 18px var(--accent-glow);
+}
+
+// ===== Nav links active/hover state =====
+.MuiButton-text:hover,
+.MuiTab-root:hover {
+    color: var(--fg-0) !important;
+}
+
+.MuiTab-root.Mui-selected {
+    color: var(--fg-0) !important;
+}
+
+.MuiTabs-indicator {
+    background-color: var(--accent) !important;
+    box-shadow: 0 0 8px var(--accent-glow) !important;
+}
+
+// ===== Section headings =====
+.sectionTitle,
+.sectionTitle-cards,
+.homeSectionHeader {
+    font-family: var(--font-body) !important;
+    font-weight: 600 !important;
+    font-size: 1.25rem !important;
+    color: var(--fg-0) !important;
+    letter-spacing: 0 !important;
+}
+
+// ===== Card overrides — MundoZero dark surfaces =====
+.cardBox:not(.visualCardBox) .cardPadder {
+    background-color: var(--bg-1) !important;
+    border-radius: var(--r-3) !important;
+}
+
+.textCardImageContainer {
+    background-color: var(--bg-2) !important;
+}
+
+.cardImageContainer {
+    border-radius: var(--r-3) !important;
+}
+
+// ─── cardBox: rounded corners only ──────────────────────────────────────────
+.cardBox {
+    border-radius: var(--r-3) !important;
+}
+
+// ─── Catalog cards: no scale/glow — popup is the only hover feedback ─────────
+.card {
+    position: relative;
+}
+
+// Disable Jellyfin's default card scale/animation on hover — popup takes over
+.card:hover > .cardBox,
+.card.show-animation:focus > .cardBox {
+    transform: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+// ─── Overlay: clean gradient + visible play button, remove clutter ───────────
+.cardOverlayContainer {
+    background: linear-gradient(
+        to top,
+        rgba(2, 5, 16, 0.80) 0%,
+        rgba(2, 5, 16, 0.20) 40%,
+        transparent 70%
+    ) !important;
+    border-radius: var(--r-3) !important;
+}
+
+// hide the three-dot options button — keeps overlay clean
+.btnCardOptions {
+    display: none !important;
+}
+
+// Progress bar — accent orange glow
+.itemProgressBar {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    border-radius: 2px !important;
+    overflow: hidden !important;
+}
+
+.itemProgressBarForeground {
+    background-color: var(--accent) !important;
+    box-shadow: 0 0 8px var(--accent-glow) !important;
+}
+
+// ===== MUI Paper / cards =====
+.MuiPaper-root {
+    background-color: var(--bg-2) !important;
+}
+
+// ===== Focus ring =====
+:focus-visible {
+    outline: 2px solid var(--accent) !important;
+    outline-offset: 4px !important;
+    border-radius: var(--r-1) !important;
+}
+
+// ===== Selection =====
+::selection {
+    background: var(--accent);
+    color: var(--fg-on-accent);
+}
+
+// ===== Scrollbar =====
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #121A33 #020510;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #020510; }
+::-webkit-scrollbar-thumb { background: #121A33; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-lo); }
+
+#reactRoot {
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+// During video playback the player inserts .videoPlayerContainer into body (outside #reactRoot).
+// Since #reactRoot has z-index:1, it paints over the video element.
+// Hiding the Starfield lets the transparent #reactRoot pass through to the video beneath.
+body.hide-scroll .mz-starfield {
+    display: none !important;
+}
+
+// ===== Home page content rows — MundoZero layout =====
+.homeSectionsContainer {
+    position: relative;
+    z-index: 2;
+    padding-bottom: var(--sp-16, 64px) !important;
+}
+
+.verticalSection {
+    padding: var(--sp-6, 24px) 0 !important;
+}
+
+.sectionTitle,
+.sectionTitle-cards {
+    font-family: var(--font-body, 'DM Sans', sans-serif) !important;
+    font-weight: 600 !important;
+    font-size: 1.25rem !important;
+    color: var(--fg-0, #F2F4FA) !important;
+    margin: 0 0 var(--sp-4, 16px) !important;
+    letter-spacing: 0 !important;
+}
+
+.sectionTitleContainer {
+    padding-bottom: var(--sp-3, 12px) !important;
+}
+
+// section "More" link
+.sectionTitleTextButton {
+    color: var(--fg-1, #A8B0C2) !important;
+    font-size: 0.875rem !important;
+    transition: color 160ms ease !important;
+
+    &:hover { color: var(--accent, #FF6B1A) !important; }
+}
+
+// Card default background override
+.defaultCardBackground1,
+.defaultCardBackground2,
+.defaultCardBackground3,
+.defaultCardBackground4,
+.defaultCardBackground5 {
+    background-color: var(--bg-1, #050816) !important;
+}
+
+// Home page is now fully React (MzHomePage) — no legacy page wrapper needed
+
+// ===== Section title chevron =====
+.sectionTitleContainer {
+    display: flex;
+    align-items: center;
+
+    .mz-section-chevron {
+        color: var(--fg-2, #5A6276);
+        font-size: 1.25rem;
+        margin-left: 4px;
+        transition: color 160ms ease;
+    }
+}
+
+.sectionTitleContainer:hover .mz-section-chevron {
+    color: var(--accent, #FF6B1A);
+}
+
+// Hide some items from the user "settings" page that are in the drawer
+#myPreferencesMenuPage {
+    .lnkQuickConnectPreferences,
+    .adminSection,
+    .userSection {
+        display: none !important;
+    }
+}
+
+// Library pages get top padding to clear the fixed AppBar
+// (home page is excluded — hero handles its own top spacing)
+.libraryPage:not(
+    .itemDetailPage
+):not(.homePage) {
+    padding-top: 3.25rem !important;
+}
+
+.layout-mobile {
+    .itemBackdrop {
+        // Fix backdrop position on mobile item details page
+        margin-top: 0 !important;
+
+        // Add a subtle gradient over the backdrop to ensure the app bar buttons are visible
+        &::before {
+            display: block;
+            content: "";
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(32, 32, 32, 0.6) 0%, rgba(32, 32, 32, 0.2) 4rem, rgba(0, 0, 0, 0) 50%);
+        }
+    }
+}

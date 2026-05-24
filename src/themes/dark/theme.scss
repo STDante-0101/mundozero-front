@@ -1,0 +1,32 @@
+/* Import the base theme */
+@use '../_base/theme';
+
+/* Card background color variants */
+.defaultCardBackground1 {
+    background-color: #050816;
+}
+
+.defaultCardBackground2 {
+    background-color: #0A1024;
+}
+
+.defaultCardBackground3 {
+    background-color: #121A33;
+}
+
+.defaultCardBackground4 {
+    background-color: #0D1530;
+}
+
+.defaultCardBackground5 {
+    background-color: #080E22;
+}
+
+/* Detail ribbon on item details pages */
+.detailRibbon {
+    background: rgba(var(--jf-palette-background-paperChannel, 32 32 32) / 0.8);
+
+    .layout-tv & {
+        background: none;
+    }
+}
