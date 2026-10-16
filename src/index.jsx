@@ -21,6 +21,7 @@ import keyboardNavigation from './scripts/keyboardNavigation';
 import { getPlugins } from './scripts/settings/webSettings';
 import taskButton from './scripts/taskbutton';
 import { pageClassOn, serverAddress } from './utils/dashboard';
+import { iniciarPonteVoid } from './scripts/voidPonte';
 import Events from './utils/events';
 
 import RootApp from './RootApp';
@@ -119,6 +120,9 @@ build: ${__JF_BUILD_VERSION__}`);
     // Enable navigation controls
     keyboardNavigation.enable();
     autoFocuser.enable();
+
+    // Ponte com o VOID (só dentro do iframe do VOID; fora dele não faz nada)
+    iniciarPonteVoid();
 }
 
 function loadFonts() {
