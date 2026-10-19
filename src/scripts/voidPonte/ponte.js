@@ -5,7 +5,8 @@
 // celular) não faz nada. O token da sessão e o segredo do Quick Connect NUNCA
 // saem desta aba: o VOID só recebe o código de 6 dígitos.
 
-export const VERSAO_PONTE = 1;
+// 2 (Etapa8/016): + controle do player (./player.js), só depois de void:modo.
+export const VERSAO_PONTE = 2;
 export const ORIGEM_VOID = 'https://tower-1.tail646ed6.ts.net';
 
 // o servidor guarda o código por 10 min (QuickConnectManager, Timeout = 10)
@@ -21,6 +22,7 @@ const VALIDADE_CODIGO_MS = 10 * 60 * 1000;
  * @param {(segredo: string) => Promise<string>} deps.concluirLogin - devolve o id do usuário
  * @param {() => Promise<void>} deps.sair
  * @param {() => number} [deps.agora]
+ * @param {(enviar: Function) => {receber: (m: object) => boolean}} [deps.criarExtra] - versão 2: o controle do player
  * @returns {{aoMensagem: Function, desligar: Function}|null} null fora de iframe
  */
 export function criarPonte({
@@ -31,19 +33,22 @@ export function criarPonte({
     consultarQuickConnect,
     concluirLogin,
     sair,
-    agora = () => Date.now()
+    agora = () => Date.now(),
+    criarExtra = null
 }) {
     if (!janela?.parent || janela.parent === janela) {
         return null;
     }
 
     const pai = janela.parent;
-    let pendente = null; // { segredo, ate }
+    let pendente = null; // o segredo e o prazo do código pendente
     let entrando = false;
 
     function enviar(tipo, dados) {
         pai.postMessage({ tipo, ...dados }, origemVoid);
     }
+
+    const extra = criarExtra ? criarExtra(enviar) : null;
 
     function ola() {
         const e = estado();
@@ -121,6 +126,7 @@ export function criarPonte({
                 enviar('mz:login-erro', { motivo: 'nao-autorizado' });
                 break;
             default:
+                extra?.receber(m);
                 break;
         }
     }
