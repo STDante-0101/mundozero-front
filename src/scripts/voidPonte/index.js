@@ -6,13 +6,17 @@
 
 import { ServerConnections } from 'lib/jellyfin-apiclient';
 
+import { history } from '../../RootAppRouter';
 import { playbackManager } from '../../components/playback/playbackmanager';
 import viewContainer from '../../components/viewContainer';
-import { navigate, onServerChanged } from '../../utils/dashboard';
+import { onServerChanged } from '../../utils/dashboard';
 import Events from '../../utils/events.ts';
 import { queryClient } from '../../utils/query/queryClient';
 import { criarPonte } from './ponte';
 import { criarPontePlayer, TRAVADOS_CONVIDADO } from './player';
+
+// Telas de entrada: só delas a ponte leva à tela inicial depois do login.
+const EM_LOGIN = /^\/(?:$|login|selectserver|forgotpassword|startup)/i;
 
 function apiClient() {
     return ServerConnections.currentApiClient();
@@ -157,10 +161,13 @@ export function iniciarPonteVoid() {
             const api = apiClient();
             const result = await api.quickConnect(segredo);
             onServerChanged(result.User.Id, result.AccessToken, api);
-            // BUG-054: a promessa do navigate às vezes nunca resolve (o appRouter
-            // só resolve quando a próxima tela "aparece"); o login já está feito
-            // — devolve sem esperar a navegação.
-            navigate('home').catch(() => { /* a tela inicial carrega sozinha */ });
+            // BUG-054: o navigate('home') entra na FILA do appRouter, que às vezes
+            // está presa numa troca de tela antiga — a promessa não resolvia (o
+            // mz:login-ok não saía) e, sem esperar por ela, a tela inicial
+            // acabava empurrada DEPOIS, por cima do filme que o VOID mandou abrir
+            // (medido no :8443, Etapa8/016). Vai direto pelo history, na hora, e
+            // só se a aba ainda estiver numa tela de entrada.
+            if (EM_LOGIN.test(history.location.pathname)) history.push('/home');
             return result.User.Id;
         },
         sair: async () => {
