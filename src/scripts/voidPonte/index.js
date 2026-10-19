@@ -56,19 +56,23 @@ function marcar(convidado, nomeDona, tocando) {
 function adaptadorPlayer() {
     const ouvidos = new WeakSet();
     let aoEvento = null;
-    let carregando = false;
 
+    // Os eventos só AVISAM que algo mudou (o mz:estado sai na hora). O estado
+    // é sempre lido do <video>: o 'playing' do 1º filme pode sair antes de a
+    // ponte começar a ouvir o player (medido no :8443 real, Etapa8/016).
     function ouvirPlayer(player) {
         if (!player || ouvidos.has(player)) return;
         ouvidos.add(player);
-        // 'waiting' = sem dados para tocar (carregando/travou) até o próximo 'playing'
-        const marcarCarregando = { playing: false, waiting: true, unpause: false };
         for (const nome of ['playing', 'waiting', 'pause', 'unpause']) {
-            Events.on(player, nome, () => {
-                if (nome in marcarCarregando) carregando = marcarCarregando[nome];
-                aoEvento?.(nome);
-            });
+            Events.on(player, nome, () => aoEvento?.(nome));
         }
+    }
+
+    // Carregando = pulando, ou mandado tocar sem dados para tocar
+    // (readyState < HAVE_FUTURE_DATA).
+    function carregandoAgora() {
+        const v = document.querySelector('video.htmlvideoplayer');
+        return !!v && (v.seeking || (!v.paused && v.readyState < 3));
     }
 
     return {
@@ -82,12 +86,11 @@ function adaptadorPlayer() {
                 posicaoMs: playbackManager.currentTime(player),
                 duracaoMs: duracao ? duracao / 10000 : null,
                 pausado: !!playbackManager.paused(player),
-                carregando,
+                carregando: carregandoAgora(),
                 taxa: player.getPlaybackRate?.() ?? 1
             };
         },
         carregar(filmeId, posicaoMs) {
-            carregando = true;
             return playbackManager.play({
                 ids: [filmeId],
                 serverId: apiClient()?.serverId(),
@@ -125,10 +128,7 @@ function adaptadorPlayer() {
                 ouvirPlayer(player);
                 f('playbackstart');
             });
-            Events.on(playbackManager, 'playbackstop', () => {
-                carregando = false;
-                f('playbackstop');
-            });
+            Events.on(playbackManager, 'playbackstop', () => f('playbackstop'));
         },
         marcar
     };

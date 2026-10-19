@@ -75,7 +75,7 @@ export function criarPontePlayer({
     let relogio = null;
     let aplicando = 0; // > 0 = a chamada veio da própria ponte
     let inicioEsperado = null; // filme que a ponte mandou carregar (eco do playbackstart)
-    let pausarAoTocar = false; // void:carregar com pausado = true
+    let pausarAoTocar = null; // filme do void:carregar com pausado = true: pausa assim que tocar
     let pendente = null; // { filmeId, alvoMs } esperando o mz:pronto
     let ultimoEstado = '';
 
@@ -110,7 +110,14 @@ export function criarPontePlayer({
 
     function contarEstado() {
         if (!ativo()) return;
-        const e = ler();
+        let e = ler();
+        // carregar pausado: pausa quando o filme pedido estiver tocando (pelo
+        // estado, não só pelo evento 'playing', que pode ter saído antes)
+        if (pausarAoTocar && e.filmeId === pausarAoTocar && e.estado === 'tocando') {
+            pausarAoTocar = null;
+            comoPonte(() => player.pausar());
+            e = ler();
+        }
         enviar('mz:estado', e);
         player.marcar(modo === 'convidado', nomeDona, e.estado !== 'parado');
         ultimoEstado = e.estado;
@@ -158,10 +165,6 @@ export function criarPontePlayer({
                 enviar('mz:acao', { acao: 'carregar', filmeId: e.filmeId, posicaoMs: e.posicaoMs });
             }
         }
-        if (nome === 'playing' && pausarAoTocar) {
-            pausarAoTocar = false;
-            comoPonte(() => player.pausar());
-        }
         contarEstado();
     }
 
@@ -184,7 +187,7 @@ export function criarPontePlayer({
         }
         pendente = null;
         inicioEsperado = null;
-        pausarAoTocar = false;
+        pausarAoTocar = null;
         comoPonte(() => player.velocidade(1));
         player.marcar(false, '', false);
     }
@@ -213,7 +216,7 @@ export function criarPontePlayer({
             comoPonte(() => (m.pausado ? player.pausar() : player.tocar()));
         } else {
             inicioEsperado = filmeId;
-            pausarAoTocar = m.pausado;
+            pausarAoTocar = m.pausado ? filmeId : null;
             comoPonte(() => player.carregar(filmeId, m.posicaoMs));
         }
         contarEstado();

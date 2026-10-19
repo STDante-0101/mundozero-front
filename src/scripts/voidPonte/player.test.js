@@ -109,6 +109,18 @@ describe('ponte v2 — controle do player', () => {
         expect(t.enviadas('mz:acao')).toHaveLength(0);
     });
 
+    it('carregar pausado SEM o evento playing (saiu antes de a ponte ouvir — medido no :8443): o tique pausa e manda mz:pronto', () => {
+        const t = montar();
+        t.p.receber({ tipo: 'void:modo', modo: 'convidado' });
+        t.p.receber({ tipo: 'void:carregar', filmeId: FILME, posicaoMs: 30000, pausado: true });
+        t.s.carregando = false; // o vídeo já toca; nenhum evento chegou
+        t.tique();
+        expect(t.s.pausado).toBe(true);
+        expect(t.enviadas('mz:estado').at(-1).estado).toBe('pausado');
+        expect(t.enviadas('mz:pronto')).toEqual([{ filmeId: FILME, posicaoMs: 30000 }]);
+        expect(t.enviadas('mz:acao')).toHaveLength(0);
+    });
+
     it('carregar o MESMO filme só posiciona (não recarrega)', () => {
         const t = montar();
         t.p.receber({ tipo: 'void:modo', modo: 'convidado' });
